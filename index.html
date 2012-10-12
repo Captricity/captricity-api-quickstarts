@@ -9,7 +9,7 @@
 
         <script>
             // Questions to nickj@captricity.com
-            captricity.endpointURL = 'https://localhost:8000/api/backbone/schema';
+            captricity.endpointURL = 'http://localhost:8000/api/backbone/schema';
             window.schema = new captricity.APISchema();
 
             $(document).ready(function() {
@@ -22,6 +22,10 @@
                 $("#account-api-token-button").click(fetchAPISchema);
                 $("#create-instance-set").click(createNewInstanceSet);
                 $("#submit-job").click(submitJob);
+
+                // bind the initialization function to schema reset
+                window.schema.bind('reset', schemaWasFetched);
+
                 // See if you can get the api token from the query parameter
                 var qs = window.location.search.substr(1);
                 var qsSplit = qs.split("&");
@@ -32,7 +36,7 @@
                 }
                 captricity.apiToken = getParams['token'];
                 if(captricity.apiToken != null && captricity.apiToken != undefined) {
-                    window.schema.fetch({success:schemaWasFetched});
+                    window.schema.fetch();
                 }
             });
 
@@ -71,14 +75,15 @@
             // Initializes the Captricity library
             function fetchAPISchema(evt) {
                 captricity.apiToken = $("#account-api-token").val();
-                window.schema.fetch({success:schemaWasFetched});
+                window.schema.fetch();
             }
 
             // Now that the Captricity JS library is initialized, get the
             // username of the account with which we're interacting.
             function schemaWasFetched(schema, response) {
                 var user = new captricity.api.UserProfile();
-                user.fetch({success:usernameWasFetched});
+                user.bind('change', usernameWasFetched);
+                user.fetch();
             }
 
             // Display the username of the account and then list
@@ -86,10 +91,14 @@
             function usernameWasFetched(userProfile, response) {
                 $("#account-api-token-button").hide();
                 $("#account-api-token").hide();
+                $("#authorize-button").hide();
+                $("#third-party-app-id").hide();
+                $("#third-party-app-secret-key").hide();
                 $("#user-username").text(userProfile.get('username'));
                 $("#user-id").show();
                 docs = new captricity.api.Documents();
-                docs.fetch({success:docsWereFetched});
+                docs.bind('reset', docsWereFetched);
+                docs.fetch();
             }
 
             // Now that the Documents are fetched, list them out so you
