@@ -37,7 +37,7 @@
             function constructURIEncodedQS(params, keyList) {
                 // This function takes in query parameters as a js object and converts it to a URI encoded query string. It will construct it in the keyList order if it is provided.
                 keyList = keyList || Object.keys(params);
-                var qs = keyList[0] + '=' + params[keyList[0]];
+                var qs = keyList[0] + '=' + encodeURIComponent(params[keyList[0]]);
                 var keyLength = keyList.length;
                 for (var i=1; i < keyLength; i++) {
                     var key = keyList[i];
