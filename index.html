@@ -41,9 +41,9 @@
                 var keyLength = keyList.length;
                 for (var i=1; i < keyLength; i++) {
                     var key = keyList[i];
-                    qs += '&' + key + '=' + params[key];
+                    qs += '&' + key + '=' + encodeURIComponent(params[key]);
                 }
-                return encodeURI(qs);
+                return qs;
             };
             function generateRequestAccessSignature(params, secretKey) {
                 // Extract the parameter keys and alphanumerically sort it in place
