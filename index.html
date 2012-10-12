@@ -30,7 +30,10 @@
                     var keyValuePair = qsSplit[i].split("=");
                     getParams[keyValuePair[0]] = decodeURI(keyValuePair[1]);
                 }
-                window.apiToken = getParams['token'];
+                captricity.apiToken = getParams['token'];
+                if(captricity.apiToken != null && captricity.apiToken != undefined) {
+                    window.schema.fetch({success:schemaWasFetched});
+                }
             });
 
             // Utility function for constructing the request access signature
@@ -222,9 +225,11 @@
             Make sure you <a href="http://stackoverflow.com/a/6666092" target="_blank">use Firefox if you are viewing this page locally</a>
         </p>
         <input id='third-party-app-id' type='text' placeholder="Your app's Client ID" size="50"><br />
-        <input id='third-party-app-secret-key' type='text' placeholder="Your app's Client Secret Key" size="50"><button id='authorize-button'>Retrieve API Token</button>
+        <input id='third-party-app-secret-key' type='text' placeholder="Your app's Client Secret Key" size="50"><button id='authorize-button'>Retrieve API Token</button><br /><br />
 
-        <input id='account-api-token' type='text' placeholder="You Account's API Token" size="50"><button id='account-api-token-button'>Access your account</button>
+        <input id='account-api-token' type='text' placeholder="You Account's API Token" size="50"><button id='account-api-token-button'>Access your account</button><br /><br />
+        <hr>
+
         <div id='api-access-results'></div>
         <br/>
         <div id='user-id' style="display:none">You have accessed the API as user: <span id='user-username'></span></div>
