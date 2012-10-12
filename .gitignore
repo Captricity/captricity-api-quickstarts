@@ -28,3 +28,5 @@ pip-log.txt
 
 # Local file
 api_token.py
+local.sh
+*.swp
