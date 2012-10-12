@@ -37,15 +37,12 @@
             function constructURIEncodedQS(params, keyList) {
                 // This function takes in query parameters as a js object and converts it to a URI encoded query string. It will construct it in the keyList order if it is provided.
                 keyList = keyList || Object.keys(params);
-                var qs = keyList[0] + '=' + params[keyList[0]];
+                var qs = keyList[0] + '=' + encodeURIComponent(params[keyList[0]]);
                 var keyLength = keyList.length;
                 for (var i=1; i < keyLength; i++) {
                     var key = keyList[i];
-                    console.log(params[key]);
-                    console.log(encodeURIComponent(params[key]));
                     qs += '&' + key + '=' + encodeURIComponent(params[key]);
                 }
-                console.log(qs);
                 return qs;
             };
             function generateRequestAccessSignature(params, secretKey) {
@@ -65,8 +62,7 @@
                     'third-party-id' : $("#third-party-app-id").val(),
                 };
                 params['signature'] = generateRequestAccessSignature(params, $("#third-party-app-secret-key").val());
-                //window.location.href = 'http://localhost:8000/accounts/request-access/?' + constructURIEncodedQS(params);
-                console.log('http://localhost:8000/accounts/request-access/?' + constructURIEncodedQS(params));
+                window.location.href = 'http://localhost:8000/accounts/request-access/?' + constructURIEncodedQS(params);
             };
 
             // Initializes the Captricity library
