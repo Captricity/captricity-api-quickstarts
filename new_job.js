@@ -11,11 +11,11 @@ newJobQuickstart.DocumentView = Backbone.View.extend({
             evt.preventDefault();
             var jobs = new captricity.api.Jobs();
             jobs.create({document_id: doc.get('id')}, {
-                success: function(job) {
+                success: _.bind(function(job) {
                     this.model = new captricity.api.Job({id: job.get('id')});
                     this.model.bind('change', this.render);
                     this.model.fetch();
-                },
+                }, this),
             });
         };
         return createNewJobWithDoc;
