@@ -6,8 +6,25 @@
         <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js"></script>
         <script src="http://crypto-js.googlecode.com/svn/tags/3.0.2/build/rollups/sha256.js"></script>
         <script src="https://shreddr.captricity.com/static/backbone/schema.js"></script>
+        <script src="javascript/new_job.js"></script>
 
         <script>
+            var JSQuickstartRouter = Backbone.Router.extend({
+                routes: {
+                    'new-job': 'newJobRoute',
+                },
+
+                initialize: function(){
+                    _.bindAll(this, 'newJobRoute');
+                },
+
+                newJobRoute: function() {
+                    var documents = new captricity.api.Documents();
+                    new newJobQuickstart.DocumentView({el: $('#quickstart-content'), collection: documents});
+                    documents.fetch();
+                },
+            });
+
             // Questions to nickj@captricity.com
             captricity.endpointURL = 'http://localhost:8000/api/backbone/schema';
             window.schema = new captricity.APISchema();
@@ -20,11 +37,6 @@
                 // Bind the button functionality
                 $("#authorize-button").click(requestAccess);
                 $("#account-api-token-button").click(fetchAPISchema);
-                $("#create-instance-set").click(createNewInstanceSet);
-                $("#submit-job").click(submitJob);
-
-                // bind the initialization function to schema reset
-                window.schema.bind('reset', schemaWasFetched);
 
                 // See if you can get the api token from the query parameter
                 var qs = window.location.search.substr(1);
@@ -78,149 +90,26 @@
                 window.schema.fetch();
             }
 
-            // Now that the Captricity JS library is initialized, get the
-            // username of the account with which we're interacting.
-            function schemaWasFetched(schema, response) {
+            // bind the initialization function to schema reset
+            window.schema.bind('reset', function() {
+                // Initialize the router
+                window.router = new JSQuickstartRouter();
+                Backbone.history.start();
+                window.router.navigate('new-job');
+
+                // Fetch the user profile using the specified api token so user knows who they are logged in as
                 var user = new captricity.api.UserProfile();
                 user.bind('change', usernameWasFetched);
                 user.fetch();
-            }
+            });
 
             // Display the username of the account and then list
             // all Documents so we can create a new job with an existing doc.
             function usernameWasFetched(userProfile, response) {
-                $("#account-api-token-button").hide();
-                $("#account-api-token").hide();
-                $("#authorize-button").hide();
-                $("#third-party-app-id").hide();
-                $("#third-party-app-secret-key").hide();
-                $("#user-username").text(userProfile.get('username'));
-                $("#user-id").show();
-                docs = new captricity.api.Documents();
-                docs.bind('reset', docsWereFetched);
-                docs.fetch();
+                var usernameDivEl = $('#user-id');
+                usernameDivEl.html('You have accessed the API as user: <span id=\'user-username\'>' + userProfile.get('username') + '</span>');
+                
             }
-
-            // Now that the Documents are fetched, list them out so you
-            // can select one to use for a new job.
-            function docsWereFetched(docs, response) {
-                $("#template-list-div").show();
-                for (var i = 0; i < docs.length; i++) {
-                    var doc = docs.at(i)
-                    var doc_name = doc.get('name');
-                    var doc_pages = doc.get('sheet_count');
-                    var item_text = doc_name + ' (' + doc_pages + ' pages)';
-                    var link = $('<a href="#">').text(item_text);
-                    link.click(createNewJobWithDocWrapper(doc));
-                    var list_item = $('<li/>')
-                    list_item.append(link);
-                    $("#template-list").append(list_item);
-                }
-            }
-
-            // Wrapper so doc is properly closed over in the for-loop
-            function createNewJobWithDocWrapper(doc) {
-                // Asynchronously creates a new job using the chosen document template.
-                var createNewJobWithDoc = function(evt) {
-                    evt.preventDefault();
-                    if (doc.get('sheet_count') ==  1) {
-                        var job = new captricity.api.Job();
-                        job.save({document_id: doc.id}, {success: newJobWasCreated});
-                    } else {
-                        alert('Multi-page documents are not supported in this example! Please choose another.');
-                    }
-                };
-                return createNewJobWithDoc
-            }
-
-            // Called when a new job is successfully created.  Reveal InstanceSet button.
-            function newJobWasCreated(job, response) {
-                if (job.get('sheet_count') != 1) {
-                    alert('ERROR: this example only works with one page templates; the template you used was ' + job.get('sheet_count') + ' pages.');
-                    return;
-                }
-                $("#template-list-div").hide();
-                $("#template-list").hide();
-                window.createdJob = job
-                $("#job-results").html('"' + job.get('name') + '" (id: ' + job.id + ') was created');
-                $("#create-instance-set").show();
-            };
-
-            // Asynchonously create a new InstanceSet.  newInstanceSetWasCreated is called on success.
-            function createNewInstanceSet(evt) {
-                if (! window.createdJob) {
-                    alert("Create a new Job first.");
-                    return;
-                }
-                var isets = new captricity.api.InstanceSets();
-                isets.id = window.createdJob.id;
-                isets.create({}, {success: newInstanceSetWasCreated});
-            };
-
-            // Called when a new InstanceSet is created.  Reveals the instance uploader widget.
-            function newInstanceSetWasCreated(iset, response) {
-                window.createdIset = iset;
-                $("#instance-set-results").html('Instance set with id ' + iset.id + ' created for "' + window.createdJob.get('name') + '"');
-                $("#create-instance").show();
-            };
-
-            // Use the JavaScript FileReader API to upload an instance image
-            // https://developer.mozilla.org/en/DOM/FileReader
-            function createNewInstance(evt) {
-                if (! window.createdIset) {
-                    alert("Create a new InstanceSet first.");
-                    return;
-                }
-                // Create this instance to get the URL
-                var instance = new captricity.api.IsetInstance();
-                var page_number = 0;
-                var instance_name = 'page 1';
-                instance.id = window.createdIset.id;
-                instance.page = page_number;
-                // Use our (patched) MultipartUploader widget to upload the image
-                var uploader = new captricity.MultipartUploader({
-                    'image_name': instance_name,
-                    'image': window.uploadFiles[0]},
-                function(f, percent){if (percent > 99) {newInstanceWasCreated();}}, instance.url());
-                patchMultipartUploader(uploader);
-            };
-
-            // Called when a new Instance is created. Allows job submission.
-            function newInstanceWasCreated() {
-                window.createdInstance = true;
-                $("#instance-set-results").html("Instance was uploaded!");
-                $("#create-instance").hide();
-                $("#submit-job").show();
-            };
-
-            // Submit job.
-            function submitJob() {
-                if (! window.createdInstance || ! window.createdJob) {
-                    return;
-                }
-                // Ugly hack to guarantee POST
-                window.createdJob.isNew = function() {return true;};
-                // POST to submit the job
-                window.createdJob.save({'submit_job_action':true}, {success: jobWasSubmitted});
-            };
-
-            function jobWasSubmitted(job, response) {
-                $("#submit-job").hide();
-                $("#submit-job-results").text("Job was submitted!");
-                $("#submit-job-results").show();
-            }
-
-            // MultipartUploader was not designed for third-party use.  Patch it to work.
-            function patchMultipartUploader(uploader) {
-                uploader.startUpload = function() {
-                    this.xhr.open(this.method, this.destinationURL, true);
-                    this.xhr.setRequestHeader('content-type', 'multipart/form-data; boundary=' + this.boundary);
-                    this.xhr.setRequestHeader("X_API_TOKEN", captricity.apiToken);
-                    this.xhr.setRequestHeader("X_API_VERSION", "0.1");
-                    this.xhr.sendAsBinary(this.body);
-                };
-                return uploader;
-            };
         </script>
     </head>
     <body>
@@ -239,24 +128,9 @@
         <input id='account-api-token' type='text' placeholder="You Account's API Token" size="50"><button id='account-api-token-button'>Access your account</button><br /><br />
         <hr>
 
-        <div id='api-access-results'></div>
+        <div id='user-id'></div>
         <br/>
-        <div id='user-id' style="display:none">You have accessed the API as user: <span id='user-username'></span></div>
-        <br/>
-        <div id='template-list-div' style="display:none">Choose a template to create a new job (only 1 page templates are supported in this example):</div>
-        <ul id='template-list'></ul>
-        <br/>
-        <div id='job-results'></div>
-        <br/>
-        <button style="display:none" id='create-instance-set'>Create Instance Set</button>
-        <div id='instance-set-results'></div>
-        <br/>
-        <form style="display:none;" action="." method="post" enctype="multipart/form-data" id="create-instance">
-            <label>Choose image to upload for instance: </label> <input type="file" id="instance-input" accept="image/*,application/pdf" onchange="window.uploadFiles=this.files; createNewInstance();"></input>
-        </form>
-        <div id='instance-results'></div>
-        <br/>
-        <button style="display:none" id='submit-job'>Submit Job</button>
-        <div id='submit-job-results'></div>
+
+        <div id='quickstart-content'></div>
     </body>
 </html>
