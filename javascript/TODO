@@ -1,0 +1,3 @@
+- Convert current setup to be parallel with quickstarts:
+-- Use Backbone routing to have multiple pages, each forming a unit to demonstrate the quickstarts
+-- Make sure we don't lose the schema when we navigate to new backbone route
