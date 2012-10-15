@@ -2,12 +2,12 @@ var newJobQuickstart = newJobQuickstart || {}
 
 newJobQuickstart.DocumentView = Backbone.View.extend({
     initialize: function() {
-        _.bindAll(this, 'render', 'createNewJobWithDocWrapper');
+        _.bindAll(this, 'render', 'next', 'createNewJobWithDocWrapper');
         this.collection.bind('reset', this.render);
     },
 
     createNewJobWithDocWrapper: function(doc) {
-        var createNewJobWithDoc = function(evt) {
+        var createNewJobWithDoc = _.bind(function(evt) {
             evt.preventDefault();
             var jobs = new captricity.api.Jobs();
             jobs.create({document_id: doc.get('id')}, {
@@ -17,12 +17,12 @@ newJobQuickstart.DocumentView = Backbone.View.extend({
                     this.model.fetch();
                 }, this),
             });
-        };
+        }, this);
         return createNewJobWithDoc;
     },
 
     next: function() {
-        window.router.navigate('upload-forms/' + this.model.get('id'));
+        window.router.navigate('upload-forms/' + this.model.get('id'), {trigger: true});
     },
 
     render: function() {
@@ -41,8 +41,7 @@ newJobQuickstart.DocumentView = Backbone.View.extend({
         if (this.model != undefined) {
             el.append($('<p>You have successfully created a <a id=\'new-job-info-link\' href=\'#\'>new job</a>. Click next to continue on to the next quickstart example.</p>'));
             $('#new-job-info-link').click(_.bind(function() {
-                // TODO: be more elegant!
-                alert('Job id: ' + this.model.get('id'));
+                alert('New Job id: ' + this.model.get('id'));
             }, this));
             var buttonEl = $('<button id=\'new-job-next\'>Next</button>');
             el.append(buttonEl);
