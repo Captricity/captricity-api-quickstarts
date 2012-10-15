@@ -2,10 +2,8 @@
 
 git stash
 git checkout gh-pages
-git checkout master javascript/js_widget_example.html
-git reset HEAD javascript/js_widget_example.html
-git checkout master javascript/new_job.js
-git reset HEAD javascript/new_job.js
+git checkout master javascript/
+git reset HEAD javascript/
 mv javascript/js_widget_example.html index.html
 mv javascript/*.js .
 git add index.html
