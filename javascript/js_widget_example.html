@@ -8,12 +8,14 @@
         <script src="http://localhost:8000/static/backbone/schema.js"></script>
         <script src="new_job.js"></script>
         <script src="upload_forms.js"></script>
+        <script src="submit_job.js"></script>
 
         <script>
             var JSQuickstartRouter = Backbone.Router.extend({
                 routes: {
                     'new-job': 'newJobRoute',
                     'upload-forms/:jobid': 'uploadFormsRoute',
+                    'submit-job/:jobid': 'submitJobRoute',
                 },
 
                 newJobRoute: function() {
@@ -27,6 +29,11 @@
                     instanceSets.id = jobid;
                     new uploadFormsQuickstart.InstanceSetsView({el: $('#quickstart-content'), collection: instanceSets});
                     instanceSets.fetch();
+                },
+
+                submitJobRoute: function(jobid) {
+                    var submitJobView = new captricityQuickstart.SubmitJobView({el: $('#quickstart-content'), jobId: jobid});
+                    submitJobView.render();
                 },
             });
 
