@@ -12,6 +12,7 @@
             var JSQuickstartRouter = Backbone.Router.extend({
                 routes: {
                     'new-job': 'newJobRoute',
+                    'upload-forms/:jobid': 'uploadFormsRoute',
                 },
 
                 initialize: function(){
@@ -22,6 +23,10 @@
                     var documents = new captricity.api.Documents();
                     new newJobQuickstart.DocumentView({el: $('#quickstart-content'), collection: documents});
                     documents.fetch();
+                },
+
+                uploadFormsRoute: function(job_id) {
+                    alert(job_id);
                 },
             });
 
