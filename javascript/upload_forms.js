@@ -56,7 +56,7 @@ uploadFormsQuickstart.InstancesView = Backbone.View.extend({
         this.collection.bind('reset', this.render);
     },
 
-    uploadImage: function(files) {
+    uploadImage: function() {
         if (window.uploadedFiles == undefined || window.uploadedFiles.length != 1) {
             alert('You must choose exactly 1 file to upload.');
         } else {
@@ -66,7 +66,7 @@ uploadFormsQuickstart.InstancesView = Backbone.View.extend({
             }
             var uploader = new captricity.MultipartUploader({
                 'page_number': page_number,
-                'image_file': files[0],
+                'image_file': window.uploadedFiles[0],
             }, _.bind(function(f, percent) { if (percent > 99) {this.collection.fetch();}}, this), 
             this.collection.url());
             $('.file-upload').html('Uploading...');
@@ -77,6 +77,7 @@ uploadFormsQuickstart.InstancesView = Backbone.View.extend({
         var el = $(this.el);
         el.empty();
         var listEl = $('<ul/>');
+        el.append(listEl);
         this.collection.each(function(item) {
             var listItemEl = $('<li/>');
             listItemEl.append($('<p>Page ' + item.get('page_number') + '</p>'));
