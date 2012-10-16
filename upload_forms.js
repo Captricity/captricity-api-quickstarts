@@ -15,7 +15,7 @@ uploadFormsQuickstart.InstanceSetsView = Backbone.View.extend({
     },
 
     next: function() {
-        alert('TODO');
+        window.router.navigate('submit-job/' + this.collection.id, {trigger: true});
     },
 
     render: function() {
