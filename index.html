@@ -9,13 +9,16 @@
         <script src="new_job.js"></script>
         <script src="upload_forms.js"></script>
         <script src="submit_job.js"></script>
+        <script src="extract_data.js"></script>
 
         <script>
             var JSQuickstartRouter = Backbone.Router.extend({
                 routes: {
                     'new-job': 'newJobRoute',
+                    'select-job': 'selectJobRoute',
                     'upload-forms/:jobid': 'uploadFormsRoute',
                     'submit-job/:jobid': 'submitJobRoute',
+                    'extract-data/:jobid': 'extractDataRoute',
                 },
 
                 newJobRoute: function() {
@@ -34,6 +37,19 @@
                 submitJobRoute: function(jobid) {
                     var submitJobView = new captricityQuickstart.SubmitJobView({el: $('#quickstart-content'), jobId: jobid});
                     submitJobView.render();
+                },
+
+                selectJobRoute: function() {
+                    var jobs = new captricity.api.Jobs();
+                    new captricityQuickstart.JobListView({el: $('#quickstart-content'), collection: jobs});
+                    jobs.fetch({data: {status: 'completed'}});
+                },
+
+                extractDataRoute: function(jobid) {
+                    var instanceSets = new captricity.api.InstanceSets();
+                    instanceSets.id = jobid;
+                    new captricityQuickstart.DataExtractionView({el: $('#quickstart-content'), collection: instanceSets, jobId: jobid});
+                    instanceSets.fetch();
                 },
             });
 

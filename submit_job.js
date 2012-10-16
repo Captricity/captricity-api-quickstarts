@@ -6,7 +6,7 @@ captricityQuickstart.SubmitJobView = Backbone.View.extend({
     },
 
     next: function() {
-        alert('TODO');
+        window.router.navigate('select-job', {trigger: true});
     },
 
     back: function() {
