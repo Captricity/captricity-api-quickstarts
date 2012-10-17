@@ -21,12 +21,14 @@
                     'extract-data/:jobid': 'extractDataRoute',
                 },
 
+                // Set up the create job quickstart example page
                 newJobRoute: function() {
                     var documents = new captricity.api.Documents();
-                    new newJobQuickstart.DocumentView({el: $('#quickstart-content'), collection: documents});
+                    new captricityQuickstart.DocumentView({el: $('#quickstart-content'), collection: documents});
                     documents.fetch();
                 },
 
+                // Set up the upload completed forms quickstart example page
                 uploadFormsRoute: function(jobid) {
                     var instanceSets = new captricity.api.InstanceSets();
                     instanceSets.id = jobid;
@@ -34,17 +36,20 @@
                     instanceSets.fetch();
                 },
 
+                // Set up the submit job quickstart example page
                 submitJobRoute: function(jobid) {
                     var submitJobView = new captricityQuickstart.SubmitJobView({el: $('#quickstart-content'), jobId: jobid});
                     submitJobView.render();
                 },
 
+                // Set up the select job page to lead into the extract data quickstart example page
                 selectJobRoute: function() {
                     var jobs = new captricity.api.Jobs();
                     new captricityQuickstart.JobListView({el: $('#quickstart-content'), collection: jobs});
                     jobs.fetch({data: {status: 'completed'}});
                 },
 
+                // Set up the extract data quickstart example page
                 extractDataRoute: function(jobid) {
                     var instanceSets = new captricity.api.InstanceSets();
                     instanceSets.id = jobid;
@@ -75,7 +80,8 @@
                     getParams[keyValuePair[0]] = decodeURI(keyValuePair[1]);
                 }
                 captricity.apiToken = getParams['token'];
-                if(captricity.apiToken != null && captricity.apiToken != undefined) {
+                if(!captricity.apiToken) {
+                    // Fetch the schema if the apiToken is set
                     window.schema.fetch();
                 }
             });
