@@ -10,7 +10,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     from api_token import API_TOKEN
-    client = Client(API_TOKEN, endpoint='https://nightly.captricity.com/api/backbone/schema')
+    client = Client(API_TOKEN)
 
     job_id = sys.argv[1]
     if client.read_document(client.read_job(job_id)['document_id'])['name'] != 'Example School Survey Template':
