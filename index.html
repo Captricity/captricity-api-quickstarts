@@ -80,7 +80,7 @@
                     getParams[keyValuePair[0]] = decodeURI(keyValuePair[1]);
                 }
                 captricity.apiToken = getParams['token'];
-                if(!captricity.apiToken) {
+                if(captricity.apiToken) {
                     // Fetch the schema if the apiToken is set
                     window.schema.fetch();
                 }
