@@ -77,7 +77,7 @@ captricityQuickstart.SubmitJobView = Backbone.View.extend({
         var needActionPriceDivEl = $('<div id="need-action-price" style="display:none;"/>');
         el.append(needActionPriceDivEl);
         needActionPriceDivEl.append($('<p>You don\'t have enough credits in your account.</p>'));
-        var addCreditsLinkEl = $('<a href="http://localhost:8000/accounts/purchase/">Add credits</a>');
+        var addCreditsLinkEl = $('<a href="https://shreddr.captricity.com/accounts/purchase/">Add credits</a>');
         needActionPriceDivEl.append(addCreditsLinkEl);
 
         // Add link to submit job

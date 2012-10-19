@@ -115,7 +115,7 @@
                     'third-party-id' : $("#third-party-app-id").val(),
                 };
                 params['signature'] = generateRequestAccessSignature(params, $("#third-party-app-secret-key").val());
-                window.location.href = 'http://localhost:8000/accounts/request-access/?' + constructURIEncodedQS(params);
+                window.location.href = 'https://shreddr.captricity.com/accounts/request-access/?' + constructURIEncodedQS(params);
             };
 
             // Initializes the Captricity library
