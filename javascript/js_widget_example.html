@@ -32,7 +32,7 @@
                 uploadFormsRoute: function(jobid) {
                     var instanceSets = new captricity.api.InstanceSets();
                     instanceSets.id = jobid;
-                    new uploadFormsQuickstart.InstanceSetsView({el: $('#quickstart-content'), collection: instanceSets});
+                    new captricityQuickstart.InstanceSetsView({el: $('#quickstart-content'), collection: instanceSets});
                     instanceSets.fetch();
                 },
 
