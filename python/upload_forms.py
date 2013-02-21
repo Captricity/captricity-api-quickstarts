@@ -22,8 +22,8 @@ if __name__ == '__main__':
     instances = client.read_instance_set_instances(iset['id'])
     assert len(instances) == 0
     
-    instance1 = client.create_instance_set_instances(iset['id'], {'page_number':'0', 'image_file':open(FORM_PAGE_0)})
-    instance2 = client.create_instance_set_instances(iset['id'], {'page_number':'1', 'image_file':open(FORM_PAGE_1)})
+    instance1 = client.create_instance_set_instances(iset['id'], {'page_number':'0', 'image_file':open(FORM_PAGE_0, 'rb')})
+    instance2 = client.create_instance_set_instances(iset['id'], {'page_number':'1', 'image_file':open(FORM_PAGE_1, 'rb')})
 
     assert len(client.read_instance_set_instances(iset['id'])) == 2
 
